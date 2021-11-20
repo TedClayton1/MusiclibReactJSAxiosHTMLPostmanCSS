@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+// import Addsong from "./components/AddSong/AddSong";
+import React, { Component } from "react";
+import axios from "axios";
+import MusicTable from "./MusicTable/MusicTable";
+// import SearchBar from "./components/SearchBar/SearchBar";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      songs: []
+    }
+  }
+
+
+componentDidMount() {
+  this.getMusic();
 }
 
+getMusic = async () => {
+  let response = await axios.get("http://localhost:8000/music/",{
+    mode: "no-cors"
+  });
+  console.log(response.data);
+  this.setState({
+    songs: response.data,
+  });
+};
+
+addNewSong = (newSong) => {
+  axios
+    .post('http://localhost.8000/music/', newSong)
+    .then((response) => console.log("Post", response));
+  this.getMusic();
+};
+
+
+
+deleteSong = (deleteSong) => {
+  axios
+    .delete('http://localhost:8000/music/3', deleteSong)
+    .then((response) => console.log("Delete", response));
+  this.deleteSong();
+};
+
+
+
+
+getSongs = async () => {
+  let response = await axios.get("http://127.0.0.1:8000/music/")
+   console.log(response.data.songs);
+   this.setState({
+     songs: response.data.songs
+   })
+}
+
+render() {
+  return (
+    <div className="App">      
+      
+        < MusicTable songs={this.state.songs} deleteSong={this.deleteSong}/>
+      </div>
+  )
+}
+}
 export default App;
